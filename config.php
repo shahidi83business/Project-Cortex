@@ -1,11 +1,20 @@
 <?php
-define('BOT_TOKEN', '8899804146:AAHlZsyBkNrUyzA-MjQWlTsll01Bjq3nze8');
-define('GITHUB_TOKEN','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');
 
-define('GITHUB_OWNER', 'shahidi83business');
-define('GITHUB_REPO', 'falconvalley');
+require_once __DIR__ . '/vendor/autoload.php';
 
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'meowtamm_main');
-define('DB_USER', 'meowtamm_main');
-define('DB_PASS', 'Amirrezashahidi83@');
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+define('BOT_TOKEN', $_ENV['BOT_TOKEN']);
+define('GITHUB_TOKEN', $_ENV['GITHUB_TOKEN']);
+
+define('GITHUB_OWNER', $_ENV['GITHUB_OWNER']);
+define('GITHUB_REPO', $_ENV['GITHUB_REPO']);
+define('GITHUB_BRANCH', $_ENV['GITHUB_BRANCH']);
+
+define('DB_HOST', $_ENV['DB_HOST']);
+define('DB_NAME', $_ENV['DB_NAME']);
+define('DB_USER', $_ENV['DB_USER']);
+define('DB_PASS', $_ENV['DB_PASS']);
