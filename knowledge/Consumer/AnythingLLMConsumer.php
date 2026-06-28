@@ -1,5 +1,7 @@
 <?php
-class AnythingLLMConsumer extends AbstractConsumer
+include "ConsumerInterface.php";
+
+class AnythingLLMConsumer implements ConsumerInterface
 {
     public function __construct(
         private AnythingLLMClient $client,
@@ -13,16 +15,16 @@ class AnythingLLMConsumer extends AbstractConsumer
 
         $markdown = $this->exporter->export($artifact);
 
-        $this->client->uploadMarkdown(
+        $location = $this->client->uploadMarkdown(
             $artifact->id . '.md',
             $markdown
         );
 
         $this->client->updateEmbeddings(
-            $this->workspace
+            $this->workspace,
+            [$location]
         );
     }
-
     public function delete(string $artifactId): void
     {
         // TODO

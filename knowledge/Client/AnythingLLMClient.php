@@ -11,25 +11,39 @@ class AnythingLLMClient
     public function uploadMarkdown(
         string $filename,
         string $markdown
-    ): array {
+    ): string {
 
-        return $this->request(
+        $response =  $this->request(
             'POST',
-            '/api/v1/document/raw-text',
+            '/v1/document/raw-text',
             [
-                'textTitle'   => $filename,
+                'metadata'   => ['title' => $filename],
                 'textContent' => $markdown
             ]
         );
+        return $response['documents'][0]['location'];
     }
 
+        public function listWorkspaces(): array
+    {
+        return $this->request(
+            'GET',
+            '/v1/workspaces'
+        );
+    }
     public function updateEmbeddings(
-        string $workspace
-    ): array {
-
+        string $workspace,
+        array $adds = [],
+        array $deletes = []
+    ): array
+    {
         return $this->request(
             'POST',
-            "/api/v1/workspace/{$workspace}/update-embeddings"
+            "/v1/workspace/{$workspace}/update-embeddings",
+            [
+                'adds' => $adds,
+                'deletes' => $deletes
+            ]
         );
     }
 
