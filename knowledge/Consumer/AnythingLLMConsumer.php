@@ -9,6 +9,11 @@ class AnythingLLMConsumer implements ConsumerInterface
         private string $workspace
     ) {}
 
+    public function name(): string
+    {
+        return 'AnythingLLM';
+    }
+    
     public function sync(KnowledgeContext $context): void
     {
         $artifact = $context->artifact;

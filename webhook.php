@@ -599,7 +599,7 @@ file_put_contents(
     );
 }elseif ($text === '/guide') {
 
-    $msg = " راهنمای ربات میوتمکن \n\n";
+    $msg = " راهنمای ربات \n\n";
 
     $msg .= "🔗 احراز هویت\n";
     $msg .= "/link username\n";
@@ -635,4 +635,68 @@ file_put_contents(
     $msg .= "/done 15\n";
 
     sendMessage($chatId, $msg);
+}elseif (str_starts_with($text, '/sync-artifacts')) {
+
+
+    $parts = explode(' ', $text);
+
+    if (count($parts) < 2) {
+        sendMessage(
+            $chatId,
+            "Usage:\n/sync <workspace-slug>"
+        );
+        exit;
+    }
+
+    $workspace = trim($parts[1]);
+    sendMessage($chatId, "🔄 Starting synchronization...");
+
+    $scanner = new ArtifactScanner();
+    $loader = new ArtifactLoader();
+
+    $dispatcher = new KnowledgeDispatcher();
+
+    $dispatcher->addConsumer(
+        new AnythingLLMConsumer(
+            new AnythingLLMClient(
+                $_ENV['ANYTHINGLLM_URL'],
+                $_ENV['ANYTHINGLLM_API_KEY']
+            ),
+            $workspace
+        )
+    );
+
+    $files = $scanner->scan(__DIR__ . '/../artifacts');
+
+    $success = 0;
+    $failed = 0;
+
+    foreach ($files as $file) {
+
+        try {
+
+            $artifact = $loader->load($file);
+
+            $dispatcher->sync($artifact);
+
+            $success++;
+
+        } catch (Throwable $e) {
+
+            $failed++;
+
+            error_log($e->getMessage());
+
+        }
+
+    }
+
+    sendMessage(
+        $chatId,
+        "✅ Synchronization completed.\n\n"
+        ."Success: {$success}\n"
+        ."Failed: {$failed}"
+    );
+
+    exit;
 }
