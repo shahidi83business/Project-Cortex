@@ -1,2 +1,5 @@
 vendor/
 .env
+composer.json
+composer.lock
+vendor.zip
